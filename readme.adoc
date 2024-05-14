@@ -1,0 +1,278 @@
+:version: v.1.0.2
+
+[.text-center]
+
+
+= Jetbeep Locker SDK for Android *{version}*
+:toc: right
+:icons: font
+:source-highlighter: pygments
+
+<<<
+
+== Introduction
+
+The Jetbeep Locker SDK for Android provides developers with the tools to integrate locker functionality into their Android applications via bluetooth communication. This document serves as a comprehensive guide to help developers understand and utilize the features of the Locker SDK.
+
+== Key Features
+
+* Find devices nearby;
+* Connect to a locker device;
+* Retrieve the status of a locker;
+* Get device info.
+* Encrypted communication.
+* Open locker.
+* Disconnect from a locker device.
+
+== System Requirements
+
+Current SDK version is compatible with Android api 26 and later.
+
+== Integration Guide
+
+To integrate the Jetbeep Locker SDK into your Android application, follow these steps:
+
+=== Step 1: Add the SDK to Your Project
+
+To add LockerSdk to your project, add the following lines to your build.gradle file:
+
+[source, groovy]
+----
+implementation 'com.jetbeep:lockersdk:1.0.5'
+----
+
+=== Step 2: Bluetooth/Location Permissions
+
+SDK needs bluetooth/location (depending on the Android version) permission to search and connecting to device.
+
+==== 2.1. Check Bluetooth.
+
+Before using SDK methods, check that you have bluetooth turned on.
+You can check this yourself or using `isBluetoothEnabled()` method in SDK.
+
+[source, kotlin]
+----
+// import com.jetbeep.lockersdk.utils.isBluetoothEnabled
+isBluetoothEnabled(context) // returns Boolean
+----
+
+==== 2.2. Check permissions.
+
+To check whether you have permissions to work with the SDK, call `isPermissionsGranted()` method.
+You must check the permissions every time before calling the `Locker.startSearching()` or `Locker.connect()` methods.
+
+[source, kotlin]
+----
+// import com.jetbeep.lockersdk.utils.isPermissionsGranted
+isPermissionsGranted(context) // returns Boolean
+----
+
+==== 2.3. Required permissions
+
+To get a list of permissions required for the SDK to run on your version of Android, you can call `getListRequiredPermissions()` method.
+
+[source, kotlin]
+----
+BluetoothUtils.getListRequiredPermissions() // list of String
+----
+
+==== 2.4. Request permissions
+
+Once you have a list of required permissions, you can request it from Android.
+Once you have list of required permissions (from the `getListRequiredPermissions()` method), you can request it from Android.
+
+To learn how to request permission at runtime, read the official Android website: https://developer.android.com/training/permissions/requesting#request-permission
+
+
+More information about runtime permissions can be read on the official Android website: https://developer.android.com/training/permissions/requesting#explain.
+
+=== Step 3: Initialize the SDK
+
+To initialize the SDK, use `LockerSdk.init()` method and pass the configuration to it.
+
+Example:
+[source, kotlin]
+----
+val sdkConfig = config {
+            projectId = "" // <your personal value provided by Jetbeep team for you>
+            environment = Environment.PRODUCTION
+            logLevel = Log.INFO
+            connectionRetryCount = 3
+        }
+
+LockerSdk.init(context, sdkConfig)
+----
+
+You can do this in `Application.onCreate()` method or in `Activity.onCreate()` method.
+
+== API Reference
+
+The Locker SDK provides the following classes and methods:
+
+=== LockerSDK
+
+After initializing the SDK, you can start working with `Locker`.
+
+[source, kotlin]
+----
+LockerSdk.locker
+----
+
+After that you can use the following methods:
+
+ - `startSearching()` - starts the locker flow and find nearby devices.
+
+[source, kotlin]
+----
+LockerSdk.locker.startSearching()
+----
+
+- `stopSearching()` - stops the locker flow.
+
+[source, kotlin]
+----
+LockerSdk.locker.stopSearching()
+----
+
+- `addDeviceListener()` -  publisher that emits the status of the locker devices.
+
+After you subscribe, you will receive events: Found, Lost, Changed events:
+
+- `onFound(device: JetbeepDevice)` - when a new device is found.
+- `onChanged(device: JetbeepDevice)` - when the status of the device is changed.
+- `onLost(device: JetbeepDevice)` - when the device is lost.
+- `onError(e: Exception)` - when an error occurred when starting a scan
+
+
+Then found devices will appear in `locker.nearbyDevices` field
+
+[source, kotlin]
+----
+locker.nearbyDevices
+----
+
+Once you find the device you need, you can connect.
+
+- `connect()` - connects to the locker device. Returns true if connection is successful, otherwise returns error.
+
+[source, kotlin]
+----
+locker.connect(jetbeepDevice)
+----
+
+- `disconnect()` - disconnects from the locker device.
+
+[source, kotlin]
+----
+locker.disconnect()
+----
+
+Available commands:
+
+- `enableEncryption()` - enables encryption for the locker device communication.
+
+[source, kotlin]
+----
+locker.enableEncryption()
+----
+
+- `getDeviceInfo()` - sends a device info request. There is an optional parameter `type` that can be used to specify the type of request. The default value is `PROJECT_KEY`.
+
+Options that could be used as a parameter:
+
+    - `DeviceInfoValidationType.NONE` - empty request.
+    - `DeviceInfoValidationType.PROJECT_KEY` - request with project key.
+    - `DeviceInfoValidationType.DEVICE_KEY` - request with device key.
+    - `publicDeviceKey` - byte array of device public key.
+
+[source, kotlin]
+----
+locker.getDeviceInfo(type, publicDeviceKey)
+----
+
+- `openLock` - sends an open lock request with a password.
+
+[source, kotlin]
+----
+locker.openLock(password)
+----
+
+
+=== Logs
+
+The SDK provides a logger that can be used to log messages.
+To listen to event logs, you can subscribe to logEvents flow. Level of the log events can be set in the configuration.
+
+[source, kotlin]
+----
+Log.logEvents.collect { logEvent ->
+    // use the log event as you wish
+}
+----
+
+Class `LogEvent` contains next properties:
+
+- `time` - event time
+- `logLevel` - log level
+- `tag` - log tag
+- `message` - log message
+
+=== Locker SDK Configuration
+
+The `Config` class is used to configure the SDK. It provides the following methods:
+
+- `projectId` - sets the project ID.
+
+- `environment` - sets the environment. The default value is `PRODUCTION`, it means production environment, `DEVELOPMENT` - development environment.
+
+- `timeUntilLoseDevice` - sets the timeout interval for device lost. The default value is 10 seconds.
+
+- `connectionRetryCount` - sets the connection retry count. The default value is 3.
+
+- `logLevel` - sets the log level. The default value is `Log.INFO`.
+
+Options that could be used as a parameter:
+
+- `Log.ERROR` - only error logs.
+- `Log.WARN` - error and warning logs.
+- `Log.INFO` - error, warning, and info logs.
+- `Log.DEBUG` - error, warning, info, and debug logs.
+- `Log.VERBOSE` - all logs.
+
+
+Example of config:
+[source, kotlin]
+----
+val sdkConfig = config {
+            projectId = 12345 // put the real project id here
+            environment = Environment.PRODUCTION
+            logLevel = Log.DEBUG
+            connectionRetryCount = 3
+        }
+----
+
+
+
+=== LockerDevice
+
+The `LockerDevice` is data class a locker device. It provides the following properties:
+
+- `deviceId` - the device ID.
+- `bluetoothDevice` - the bluetooth device
+- `isConnectable` - connection possibility
+- `projectId` - the project ID.
+- `userData` - the user data.
+- `lastSeenTime` - time last seen
+
+=== Open lock result
+
+The `OpenLockResult` class represents an open lock response. It provides the following properties:
+
+- `lockIndex` - the lock index.
+- `address` - the address of the locker.
+- `name` - the name of the locker.
+
+
+== Conclusion
+
+This document has provided a comprehensive guide to integrating the Jetbeep Locker SDK into your Android application. If you have any questions or need further assistance, please contact us email at max.tymchii@jetbeep.com or visit our website at https://jetbeep.com.

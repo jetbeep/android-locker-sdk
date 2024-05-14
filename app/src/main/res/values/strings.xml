@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">LockerSdkDemo</string>
+
+    <string name="logs">Logs:</string>
+    <string name="scanning">Scanning…</string>
+    <string name="granted">Permissions - granted</string>
+    <string name="not_granted">Permissions - not granted</string>
+    <string name="share_logs">share logs</string>
+    <string name="devices">Nearby devices:</string>
+    <string name="permissions">Permissions granted</string>
+    <string name="request">Request</string>
+    <string name="bluetooth_on">Bluetooth</string>
+    <string name="bluetooth_off">Bluetooth - Disabled</string>
+    <string name="device_search">Device search</string>
+    <string name="find_device">Find device</string>
+    <string name="stop">Stop</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="device_item_label">Device: %1$d</string>
+    <string name="connect">Connect</string>
+    <string name="conditions">Conditions:</string>
+    <string name="connecting">connecting…</string>
+    <string name="connected_device">Connected device: %1$d</string>
+    <string name="get_device_info">Get device info</string>
+    <string name="encrypt_connection">Encrypt connection</string>
+    <string name="open_lock">Open lock</string>
+    <string name="logs_button">Logs</string>
+</resources>
