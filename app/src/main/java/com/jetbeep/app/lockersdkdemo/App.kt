@@ -15,7 +15,7 @@ class App : Application() {
         // init locker sdk
         LockerSdk.init(applicationContext, config {
             environment = Environment.PRODUCTION
-            logLevel = Log.DEBUG
+            logLevel = Log.INFO
         })
     }
 }

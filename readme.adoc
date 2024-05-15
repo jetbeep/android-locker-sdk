@@ -1,4 +1,4 @@
-:version: v.1.0.2
+:version: v.1.0.5
 
 [.text-center]
 
