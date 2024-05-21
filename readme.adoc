@@ -1,4 +1,4 @@
-:version: v.1.0.5
+:version: v.1.0.6
 
 [.text-center]
 
@@ -38,7 +38,7 @@ To add LockerSdk to your project, add the following lines to your build.gradle f
 
 [source, groovy]
 ----
-implementation 'com.jetbeep:lockersdk:1.0.5'
+implementation 'com.jetbeep:lockersdk:1.0.6'
 ----
 
 === Step 2: Bluetooth/Location Permissions
