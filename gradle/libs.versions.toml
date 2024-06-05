@@ -9,7 +9,7 @@ appcompat = "1.6.1"
 material = "1.12.0"
 activity = "1.9.0"
 constraintlayout = "2.1.4"
-lockersdk = "1.0.6"
+lockersdk = "1.0.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
